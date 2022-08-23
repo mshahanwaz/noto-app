@@ -10,7 +10,7 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main>
+      <main className="prose max-w-xl mx-auto my-4 bg-slate-200">
         <h1>Noto App</h1>
         <p>This is the sample application for Noto App.</p>
       </main>

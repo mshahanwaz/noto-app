@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^1.6.6",
     "@heroicons/react": "^2.0.1",
     "firebase": "^9.9.3",
     "moment": "^2.29.4",

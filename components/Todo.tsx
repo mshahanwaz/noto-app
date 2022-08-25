@@ -3,21 +3,40 @@ import classNames from "utils/classNames";
 import Checkbox from "./Checkbox";
 import moment from "moment";
 import { EditPenIcon, TrashIcon } from "./icons";
+import { useRecoilState } from "recoil";
+import {
+  docIdState,
+  editModalState,
+  modalState,
+  typeModalState,
+} from "atoms/modal";
+import { collection, deleteDoc, doc, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
 
-const Todo = ({ todo, setTodos }: any) => {
-  const handleTodos = () => {
-    setTodos((prevTodos: any) => {
-      return prevTodos.map((prevTodo: any) => {
-        if (prevTodo.id === todo.id) {
-          return {
-            ...prevTodo,
-            completed: !prevTodo.completed,
-          };
-        }
-        return prevTodo;
-      });
+const Todo = ({ todo }: any) => {
+  const [open, setOpen] = useRecoilState(modalState);
+  const [type, setType] = useRecoilState(typeModalState);
+  const [edit, setEdit] = useRecoilState(editModalState);
+  const [newId, setNewId] = useRecoilState(docIdState);
+  const [completed, setCompleted] = React.useState(todo.completed);
+
+  const toggleCompleteTodo = async () => {
+    await updateDoc(doc(db, "todos", todo?.id), {
+      completed: !completed,
     });
+    setCompleted(!completed);
   };
+
+  async function handleDelete() {
+    await deleteDoc(doc(db, "todos", todo?.id));
+  }
+
+  function handleUpdate() {
+    setOpen(true);
+    setType("todos");
+    setEdit(true);
+    setNewId(todo?.id);
+  }
 
   return (
     <div
@@ -26,15 +45,23 @@ const Todo = ({ todo, setTodos }: any) => {
       )}
     >
       <div className="flex items-center gap-4">
-        <Checkbox todo={todo} onClick={handleTodos} />
+        <Checkbox todo={todo} onClick={toggleCompleteTodo} />
         <div className={classNames("flex-1")}>
-          {moment(todo.createdAt).fromNow()}
+          {todo?.updated
+            ? `${moment(todo?.updated?.toDate()).fromNow()}(edited)`
+            : moment(todo?.timestamp?.toDate()).fromNow()}
         </div>
         <div className="flex gap-2 self-start">
-          <button className="p-2 hover:bg-slate-200 rounded-lg">
+          <button
+            className="p-2 hover:bg-slate-200 rounded-lg"
+            onClick={handleUpdate}
+          >
             <EditPenIcon />
           </button>
-          <button className="p-2 hover:bg-slate-200 rounded-lg">
+          <button
+            className="p-2 hover:bg-slate-200 rounded-lg"
+            onClick={handleDelete}
+          >
             <TrashIcon />
           </button>
         </div>

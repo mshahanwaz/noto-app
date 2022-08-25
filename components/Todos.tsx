@@ -30,7 +30,7 @@ const Todos = () => {
   return (
     <div className="">
       <div
-        className="flex items-center justify-center gap-4 p-4 border-2 text-lg font-medium text-slate-400 border-dashed hover:border-solid border-slate-400 cursor-pointer rounded-xl"
+        className="flex items-center justify-center gap-4 p-4 border-2 text-lg font-medium text-slate-400 dark:text-grey-light border-dashed hover:border-solid border-slate-400 dark:border-grey-medium cursor-pointer rounded-xl"
         onClick={addTodo}
       >
         <PlusIcon width={24} />
@@ -45,9 +45,11 @@ const Todos = () => {
         )}
       </div>
       <div className="my-8">
-        <p className="pb-4">
-          Completed - {todos.filter((todo: any) => todo?.completed).length}/
-          {todos.length}
+        <p className="pb-4 dark:text-grey-light">
+          Completed -{" "}
+          <strong>
+            {todos.filter((todo: any) => todo?.completed).length}/{todos.length}
+          </strong>
         </p>
         <div className="flex flex-col gap-4 rounded-lg">
           {todos.map(

@@ -10,6 +10,14 @@ module.exports = {
       fontFamily: {
         sans: ["Inter", "sans-serif"],
       },
+      colors: {
+        grey: {
+          light: "#8c8680",
+          DEFAULT: "#131516",
+          medium: "#545454",
+          dark: "#0f0f0f",
+        },
+      },
     },
   },
   plugins: [require("@tailwindcss/typography")],

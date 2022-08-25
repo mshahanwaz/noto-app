@@ -41,7 +41,7 @@ const Todo = ({ todo }: any) => {
   return (
     <div
       className={classNames(
-        "p-4 bg-slate-50 hover:bg-slate-100 rounded-lg text-black"
+        "p-4 bg-slate-50 dark:bg-grey-dark hover:bg-slate-100 dark:hover:bg-black rounded-lg text-black dark:text-grey-light"
       )}
     >
       <div className="flex items-center gap-4">
@@ -52,25 +52,19 @@ const Todo = ({ todo }: any) => {
             : moment(todo?.timestamp?.toDate()).fromNow()}
         </div>
         <div className="flex gap-2 self-start">
-          <button
-            className="p-2 hover:bg-slate-200 rounded-lg"
-            onClick={handleUpdate}
-          >
+          <CustomButton onClick={handleUpdate}>
             <EditPenIcon />
-          </button>
-          <button
-            className="p-2 hover:bg-slate-200 rounded-lg"
-            onClick={handleDelete}
-          >
+          </CustomButton>
+          <CustomButton onClick={handleDelete}>
             <TrashIcon />
-          </button>
+          </CustomButton>
         </div>
       </div>
       <div>
         <h3
           className={classNames(
-            "mt-4 text-lg font-medium",
-            todo.completed ? "line-through" : ""
+            "mt-4 text-lg font-medium dark:text-white",
+            todo.completed && "line-through"
           )}
         >
           {todo.title}
@@ -81,3 +75,14 @@ const Todo = ({ todo }: any) => {
 };
 
 export default Todo;
+
+const CustomButton = ({ children, ...props }: any) => {
+  return (
+    <button
+      className="p-2 hover:bg-slate-200 dark:hover:bg-white dark:hover:text-black rounded-lg"
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};

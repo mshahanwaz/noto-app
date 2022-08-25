@@ -5,7 +5,7 @@ import {
   editModalState,
   modalState,
 } from "atoms/modal";
-import React, { useEffect } from "react";
+import React from "react";
 import { useRecoilState } from "recoil";
 import {
   addDoc,
@@ -118,7 +118,7 @@ const Modal = () => {
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <div className="fixed inset-0 bg-black bg-opacity-25" />
+            <div className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50" />
           </Transition.Child>
 
           <div className="fixed inset-0 overflow-y-auto">
@@ -142,14 +142,14 @@ const Modal = () => {
                   <div className="my-4 flex flex-col gap-4">
                     <input
                       type="text"
-                      className="p-2 border-2 w-full rounded-lg outline-none"
+                      className="p-2 border-2 dark:border-grey-light dark:focus:border-grey w-full rounded-lg outline-none"
                       placeholder="Title"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                     />
                     {type === "notes" && (
                       <textarea
-                        className="p-2 border-2 w-full rounded-lg h-24 outline-none"
+                        className="p-2 border-2 dark:border-grey-light dark:focus:border-grey w-full rounded-lg h-24 outline-none"
                         placeholder={`${
                           edit ? "Update" : "Write"
                         } ${type.substring(0, type.length - 1)} here...`}
@@ -167,8 +167,8 @@ const Modal = () => {
                       (type === "notes" && !content?.length)
                     }
                     className={classNames(
-                      "inline-flex justify-center rounded-md border border-transparent bg-slate-100 px-4 py-2 font-medium text-black hover:bg-slate-200",
-                      "disabled:text-slate-400 disabled:cursor-not-allowed"
+                      "inline-flex justify-center rounded-md border border-transparent bg-slate-100 dark:bg-grey dark:text-white px-4 py-2 font-medium text-black hover:bg-slate-200 dark:hover:bg-black dark:hover:text-white",
+                      "disabled:text-slate-400 dark:disabled:text-white dark:disabled:bg-grey-light disabled:cursor-not-allowed"
                     )}
                     onClick={edit ? handleUpdate : handleAdd}
                   >

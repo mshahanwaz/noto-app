@@ -30,7 +30,7 @@ const Notes = () => {
   return (
     <div>
       <div
-        className="flex items-center justify-center gap-4 p-4 border-2 text-lg font-medium text-slate-400 border-dashed hover:border-solid border-slate-400 cursor-pointer rounded-xl"
+        className="flex items-center justify-center gap-4 p-4 border-2 text-lg font-medium text-slate-400 dark:text-grey-light border-dashed hover:border-solid border-slate-400 dark:border-grey-medium cursor-pointer rounded-xl"
         onClick={addNote}
       >
         <PlusIcon width={24} />

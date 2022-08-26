@@ -2,7 +2,7 @@ import React from "react";
 
 const Gradient = () => {
   return (
-    <div className="max-w-xl mx-auto h-[2px] bg-gradient-to-r from-transparent via-slate-300 dark:via-grey-medium to-transparent" />
+    <div className="max-w-xl mx-auto h-[1px] bg-gradient-to-r from-transparent via-slate-300 dark:via-grey-medium to-transparent" />
   );
 };
 

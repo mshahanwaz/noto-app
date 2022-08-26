@@ -5,7 +5,7 @@ import {
   editModalState,
   modalState,
 } from "atoms/modal";
-import React from "react";
+import React, { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import {
   addDoc,
@@ -23,90 +23,124 @@ const Modal = () => {
   const [open, setOpen] = useRecoilState(modalState);
   const [type, setType] = useRecoilState(typeModalState);
   const [edit, setEdit] = useRecoilState(editModalState);
-  const [newId, setNewId] = useRecoilState(docIdState);
+  const [docId, setDocId] = useRecoilState(docIdState);
   const [loading, setLoading] = React.useState(false);
   const [title, setTitle] = React.useState("");
   const [content, setContent] = React.useState("");
+  const [addTitle, setAddTitle] = React.useState("");
+  const [addContent, setAddContent] = React.useState("");
   const { data: session }: any = useSession();
 
-  React.useEffect(() => {
-    async function getDocs() {
+  useEffect(() => {
+    async function loadDoc() {
       await onSnapshot(collection(db, type), (snapshot: any) => {
-        let doc = snapshot?.docs
-          ?.filter((doc: any) => doc.id === newId)[0]
+        let docWithId = snapshot?.docs
+          ?.filter((doc: any) => doc.id === docId)[0]
           ?.data();
-        setTitle((title) => doc?.title || title);
-        if (type === "notes") setContent((content) => doc?.content || content);
+        setTitle(docWithId?.title);
+        if (type === "notes") setContent(docWithId?.content);
       });
     }
-    getDocs();
-  }, [newId, type]);
 
-  async function handleAdd() {
+    loadDoc();
+  }, [docId]); // eslint-disable-line
+
+  async function handleAddDoc() {
     if (loading) return;
+    if (!addTitle || (type === "notes" && !addContent)) return;
 
-    if (type === "notes" && title && content) {
-      setLoading(true);
+    setLoading(true);
+    if (type === "notes") {
       await addDoc(collection(db, "notes"), {
         uid: session?.user?.uid,
         username: session?.user?.username,
         email: session?.user?.email,
-        title: title,
-        content: content,
+        title: addTitle,
+        content: addContent,
         profilePic: session?.user?.image,
         timestamp: serverTimestamp(),
       });
-    } else if (type === "todos") {
-      setLoading(true);
+    } else {
       await addDoc(collection(db, "todos"), {
         uid: session?.user?.uid,
         username: session?.user?.username,
         email: session?.user?.email,
-        title: title,
+        title: addTitle,
         profilePic: session?.user?.image,
         timestamp: serverTimestamp(),
         completed: false,
       });
     }
 
-    handleClose();
+    handleCloseModal();
   }
 
-  async function handleUpdate() {
+  async function handleUpdateDoc() {
     if (loading) return;
+    if (!title || (type === "notes" && !content)) return;
 
-    if (type === "notes" && title && content) {
-      setLoading(true);
-      await updateDoc(doc(db, "notes", newId), {
+    setLoading(true);
+    if (type === "notes") {
+      await updateDoc(doc(db, "notes", docId), {
         title: title,
         content: content,
         updated: serverTimestamp(),
       });
-    } else if (type === "todos" && title) {
-      setLoading(true);
-      await updateDoc(doc(db, "todos", newId), {
+    } else {
+      await updateDoc(doc(db, "todos", docId), {
         title: title,
         updated: serverTimestamp(),
       });
     }
 
-    handleClose();
+    handleCloseModal();
   }
 
-  function handleClose() {
+  function handleCloseModal() {
     setOpen(false);
     setLoading(false);
     setTimeout(() => {
+      setEdit(false);
+      setDocId("");
       setTitle("");
       setContent("");
-      setEdit(false);
-    }, 500);
+      setAddTitle("");
+      setAddContent("");
+    }, 1000);
+  }
+
+  function handleInputChange(e: any) {
+    let val = e.target.value;
+
+    if (edit) {
+      setTitle(val);
+    } else {
+      setAddTitle(val);
+    }
+  }
+
+  function handleTextAreaChange(e: any) {
+    let val = e.target.value;
+
+    if (edit) {
+      setContent(val);
+    } else {
+      setAddContent(val);
+    }
+  }
+
+  function handleDisable() {
+    let disable =
+      loading ||
+      (edit && (!title || (type === "notes" && !content))) ||
+      (!edit && (!addTitle || (type === "notes" && !addContent)));
+    return disable;
   }
 
   return (
     <div>
       <Transition appear show={open} as={React.Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={handleClose}>
+        <Dialog as="div" className="relative z-10" onClose={handleCloseModal}>
           <Transition.Child
             as={React.Fragment}
             enter="ease-out duration-300"
@@ -142,8 +176,8 @@ const Modal = () => {
                       type="text"
                       className="p-2 border-2 dark:border-grey-light dark:focus:border-grey w-full rounded-lg outline-none"
                       placeholder="Title"
-                      value={title}
-                      onChange={(e) => setTitle(e.target.value)}
+                      value={edit ? title : addTitle}
+                      onChange={handleInputChange}
                     />
                     {type === "notes" && (
                       <textarea
@@ -151,24 +185,20 @@ const Modal = () => {
                         placeholder={`${
                           edit ? "Update" : "Write"
                         } ${type.substring(0, type.length - 1)} here...`}
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
+                        value={edit ? content : addContent}
+                        onChange={handleTextAreaChange}
                       />
                     )}
                   </div>
 
                   <button
                     type="submit"
-                    disabled={
-                      loading ||
-                      !title?.length ||
-                      (type === "notes" && !content?.length)
-                    }
+                    disabled={handleDisable()}
                     className={classNames(
                       "inline-flex justify-center rounded-md border border-transparent bg-slate-100 dark:bg-grey dark:text-white px-4 py-2 font-medium text-black hover:bg-slate-200 dark:hover:bg-black dark:hover:text-white",
                       "disabled:text-slate-400 dark:disabled:text-white dark:disabled:bg-grey-light disabled:cursor-not-allowed"
                     )}
-                    onClick={edit ? handleUpdate : handleAdd}
+                    onClick={edit ? handleUpdateDoc : handleAddDoc}
                   >
                     {loading
                       ? `${edit ? "Updating" : "Adding"}...`

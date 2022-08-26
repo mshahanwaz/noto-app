@@ -29,7 +29,7 @@ const Docs = () => {
   }
 
   return (
-    <div>
+    <main className="px-4 py-8 max-w-xl mx-auto min-h-screen">
       <div
         className="flex items-center justify-center gap-4 p-4 border-2 text-lg font-medium text-slate-400 dark:text-grey-light border-dashed hover:border-solid border-slate-400 dark:border-grey-medium cursor-pointer rounded-xl"
         onClick={handleAddDoc}
@@ -38,14 +38,12 @@ const Docs = () => {
         <p>Add {type.substring(0, type.length - 1)}</p>
       </div>
       <div className="my-8 flex flex-col gap-4 rounded-lg">
-        <div>
-          {docs.map(
-            (doc: any) =>
-              (type === "notes" || !doc?.completed) && (
-                <Doc key={doc?.id} doc={doc} />
-              )
-          )}
-        </div>
+        {docs.map(
+          (doc: any) =>
+            (type === "notes" || !doc?.completed) && (
+              <Doc key={doc?.id} doc={doc} />
+            )
+        )}
       </div>
 
       {type === "todos" && (
@@ -63,7 +61,7 @@ const Docs = () => {
           </div>
         </div>
       )}
-    </div>
+    </main>
   );
 };
 

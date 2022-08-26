@@ -20,9 +20,7 @@ const Home: NextPage = () => {
 
       <Header />
 
-      <main className="px-4 py-8 max-w-xl mx-auto min-h-screen">
-        <Docs />
-      </main>
+      <Docs />
     </div>
   );
 };

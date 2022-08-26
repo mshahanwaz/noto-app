@@ -14,25 +14,25 @@ import { db } from "../firebase";
 import Link from "next/link";
 import Checkbox from "./Checkbox";
 
-const Doc = ({ doc }: any) => {
+const Doc = ({ doc: currDoc }: any) => {
   const [open, setOpen] = useRecoilState(modalState);
   const [edit, setEdit] = useRecoilState(editModalState);
   const [newId, setNewId] = useRecoilState(docIdState);
   const [type, setType] = useRecoilState(typeModalState);
-  const [completed, setCompleted] = React.useState(doc?.completed || false);
+  const [completed, setCompleted] = React.useState(currDoc?.completed || false);
 
   async function handleDeleteDoc() {
-    await deleteDoc(doc(db, type, doc?.id));
+    await deleteDoc(doc(db, type, currDoc?.id));
   }
 
   function handleUpdateDoc() {
     setOpen(true);
     setEdit(true);
-    setNewId(doc?.id);
+    setNewId(currDoc?.id);
   }
 
   const markTodo = async () => {
-    await updateDoc(doc(db, "todos", doc?.id), {
+    await updateDoc(doc(db, "todos", currDoc?.id), {
       completed: !completed,
     });
     setCompleted(!completed);
@@ -52,12 +52,12 @@ const Doc = ({ doc }: any) => {
             </a>
           </Link>
         ) : (
-          <Checkbox doc={doc} onClick={markTodo} />
+          <Checkbox doc={currDoc} onClick={markTodo} />
         )}
         <div className={classNames("flex-1")}>
-          {doc?.updated
-            ? `${moment(doc?.updated?.toDate()).fromNow()}(edited)`
-            : moment(doc?.timestamp?.toDate()).fromNow()}
+          {currDoc?.updated
+            ? `${moment(currDoc?.updated?.toDate()).fromNow()}(edited)`
+            : moment(currDoc?.timestamp?.toDate()).fromNow()}
         </div>
         <div className="flex gap-2 self-start">
           <button
@@ -76,11 +76,11 @@ const Doc = ({ doc }: any) => {
       </div>
       <div>
         <h3 className="mt-4 text-lg font-semibold dark:text-white">
-          {doc?.title}
+          {currDoc?.title}
         </h3>
         {type === "notes" && (
           <p className="text-md text-slate-500 dark:text-grey-light truncate">
-            {doc?.content}
+            {currDoc?.content}
           </p>
         )}
       </div>

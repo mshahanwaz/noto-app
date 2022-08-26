@@ -38,7 +38,7 @@ const Header = () => {
           )}
         </div>
         <p className="text-slate-500 dark:text-grey-light font-medium">
-          Notes + Todo taking application built with Next.js
+          Lightweight notes + todo taking application built with Next.js
         </p>
       </div>
 

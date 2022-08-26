@@ -45,7 +45,9 @@ const Modal = () => {
     loadDoc();
   }, [docId]); // eslint-disable-line
 
-  async function handleAddDoc() {
+  async function handleAddDoc(e: any) {
+    e.preventDefault();
+
     if (loading) return;
     if (!addTitle || (type === "notes" && !addContent)) return;
 
@@ -75,7 +77,9 @@ const Modal = () => {
     handleCloseModal();
   }
 
-  async function handleUpdateDoc() {
+  async function handleUpdateDoc(e: any) {
+    e.preventDefault();
+
     if (loading) return;
     if (!title || (type === "notes" && !content)) return;
 
@@ -171,42 +175,43 @@ const Modal = () => {
                   >
                     {edit ? "Update" : "Add"} {type}
                   </Dialog.Title>
-                  <div className="my-4 flex flex-col gap-4">
-                    <input
-                      type="text"
-                      className="p-2 border-2 dark:border-grey-light dark:focus:border-grey w-full rounded-lg outline-none"
-                      placeholder="Title"
-                      value={edit ? title : addTitle}
-                      onChange={handleInputChange}
-                    />
-                    {type === "notes" && (
-                      <textarea
-                        className="p-2 border-2 dark:border-grey-light dark:focus:border-grey w-full rounded-lg h-24 outline-none"
-                        placeholder={`${
-                          edit ? "Update" : "Write"
-                        } ${type.substring(0, type.length - 1)} here...`}
-                        value={edit ? content : addContent}
-                        onChange={handleTextAreaChange}
+                  <form onSubmit={edit ? handleUpdateDoc : handleAddDoc}>
+                    <div className="my-4 flex flex-col gap-4">
+                      <input
+                        type="text"
+                        className="p-2 border-2 dark:border-grey-light focus:border-grey w-full rounded-lg outline-none"
+                        placeholder="Title"
+                        value={edit ? title : addTitle}
+                        onChange={handleInputChange}
                       />
-                    )}
-                  </div>
+                      {type === "notes" && (
+                        <textarea
+                          className="p-2 border-2 dark:border-grey-light focus:border-grey w-full rounded-lg h-24 outline-none"
+                          placeholder={`${
+                            edit ? "Update" : "Write"
+                          } ${type.substring(0, type.length - 1)} here...`}
+                          value={edit ? content : addContent}
+                          onChange={handleTextAreaChange}
+                        />
+                      )}
+                    </div>
 
-                  <button
-                    type="submit"
-                    disabled={handleDisable()}
-                    className={classNames(
-                      "inline-flex justify-center rounded-md border border-transparent bg-slate-100 dark:bg-grey dark:text-white px-4 py-2 font-medium text-black hover:bg-slate-200 dark:hover:bg-black dark:hover:text-white",
-                      "disabled:text-slate-400 dark:disabled:text-white dark:disabled:bg-grey-light disabled:cursor-not-allowed"
-                    )}
-                    onClick={edit ? handleUpdateDoc : handleAddDoc}
-                  >
-                    {loading
-                      ? `${edit ? "Updating" : "Adding"}...`
-                      : `${edit ? "Update" : "Add"} ${type.substring(
-                          0,
-                          type.length - 1
-                        )}`}
-                  </button>
+                    <button
+                      type="submit"
+                      disabled={handleDisable()}
+                      className={classNames(
+                        "inline-flex justify-center rounded-md border border-transparent bg-grey dark:bg-grey dark:text-white px-4 py-2 font-medium text-white hover:bg-black dark:hover:text-white",
+                        "disabled:text-white disabled:bg-grey-light disabled:cursor-not-allowed"
+                      )}
+                    >
+                      {loading
+                        ? `${edit ? "Updating" : "Adding"}...`
+                        : `${edit ? "Update" : "Add"} ${type.substring(
+                            0,
+                            type.length - 1
+                          )}`}
+                    </button>
+                  </form>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

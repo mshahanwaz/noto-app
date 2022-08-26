@@ -47,7 +47,7 @@ const Modal = () => {
 
     if (type === "notes" && title && content) {
       setLoading(true);
-      let docRef = await addDoc(collection(db, "notes"), {
+      await addDoc(collection(db, "notes"), {
         uid: session?.user?.uid,
         username: session?.user?.username,
         email: session?.user?.email,
@@ -56,7 +56,6 @@ const Modal = () => {
         profilePic: session?.user?.image,
         timestamp: serverTimestamp(),
       });
-      setNewId(docRef.id);
     } else if (type === "todos") {
       setLoading(true);
       await addDoc(collection(db, "todos"), {
@@ -68,7 +67,6 @@ const Modal = () => {
         timestamp: serverTimestamp(),
         completed: false,
       });
-      setTitle(title);
     }
 
     handleClose();

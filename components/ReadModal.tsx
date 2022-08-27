@@ -1,22 +1,29 @@
 import { Dialog, Transition } from "@headlessui/react";
 import React, { useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { userDocState } from "atoms/userDoc";
 import { readDocIdModal, readModal } from "atoms/readModal";
 import { ArrowLeftIcon } from "./icons";
 import moment from "moment";
+import { useSession } from "next-auth/react";
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase";
+import { typeModalState } from "atoms/modal";
 
 const ReadModal = () => {
   const [open, setOpen] = useRecoilState(readModal);
   const [doc, setDoc] = React.useState<any>({});
-  const [userDoc, setUserDoc] = useRecoilState(userDocState);
+  const [type, setType] = useRecoilState(typeModalState);
   const [readDocId, setReadDocId] = useRecoilState(readDocIdModal);
+  const { data: session }: any = useSession();
 
   useEffect(() => {
-    if (open) {
-      setDoc(userDoc?.notes?.filter((doc: any) => doc.id === readDocId)[0]);
+    if (open && session) {
+      const collectionRef = collection(db, "users", session?.user?.uid, type);
+      return onSnapshot(collectionRef, (snapshot: any) => {
+        setDoc(snapshot?.docs?.filter((doc: any) => doc.id === readDocId)[0]);
+      });
     }
-  }, [open, readDocId, userDoc]);
+  }, [session, open, readDocId, type]);
 
   function handleCloseModal() {
     setReadDocId("");

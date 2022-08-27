@@ -3,7 +3,7 @@ import {
   docIdState,
   typeModalState,
   editModalState,
-  modalState,
+  openModal,
 } from "atoms/modal";
 import React, { useEffect } from "react";
 import { useRecoilState } from "recoil";
@@ -13,14 +13,16 @@ import {
   serverTimestamp,
   updateDoc,
   doc,
+  onSnapshot,
+  query,
+  orderBy,
 } from "@firebase/firestore";
 import { db } from "../firebase";
 import classNames from "utils/classNames";
-import { userDocState } from "atoms/userDoc";
+import { useSession } from "next-auth/react";
 
 const Modal = () => {
-  const [userDoc, setUserDoc] = useRecoilState(userDocState);
-  const [open, setOpen] = useRecoilState(modalState);
+  const [open, setOpen] = useRecoilState(openModal);
   const [type, setType] = useRecoilState(typeModalState);
   const [edit, setEdit] = useRecoilState(editModalState);
   const [docId, setDocId] = useRecoilState(docIdState);
@@ -29,16 +31,21 @@ const Modal = () => {
   const [content, setContent] = React.useState("");
   const [addTitle, setAddTitle] = React.useState("");
   const [addContent, setAddContent] = React.useState("");
+  const { data: session }: any = useSession();
 
   useEffect(() => {
-    let docToBeEdited: any = userDoc?.[type]?.filter(
-      (doc: any) => doc.id === docId
-    )[0];
-    setTitle(docToBeEdited?.title);
-    if (type === "notes") setContent(docToBeEdited?.content);
-  }, [docId, userDoc, type]);
+    if (session) {
+      const collectionRef = collection(db, "users", session?.user?.uid, type);
+      return onSnapshot(collectionRef, (snapshot: any) => {
+        let existingDoc = snapshot?.docs?.filter(
+          (doc: any) => doc?.id === docId
+        )[0];
+        setTitle(existingDoc?.data()?.title || "");
+        if (type === "notes") setContent(existingDoc?.data()?.content || "");
+      });
+    }
+  }, [session, docId, type]);
 
-  // ADD DOC
   async function handleAddDoc(e: any) {
     e.preventDefault();
 
@@ -47,37 +54,23 @@ const Modal = () => {
 
     setLoading(true);
 
-    const docRef = await addDoc(collection(db, "users", userDoc?.uid, type), {
-      title: addTitle,
-      ...(type === "notes" && { content: addContent }),
-      timestamp: serverTimestamp(),
-      ...(type === "todos" && { completed: false }),
-    });
-
-    await updateDoc(doc(db, "users", userDoc?.uid, type, docRef.id), {
-      id: docRef.id,
-    });
-
-    setUserDoc((userDoc: any) => {
-      const newDoc = {
-        id: docRef.id,
+    const docRef = await addDoc(
+      collection(db, "users", session?.user?.uid, type),
+      {
         title: addTitle,
         ...(type === "notes" && { content: addContent }),
-        timestamp: {
-          toDate: () => new Date(),
-        },
+        timestamp: serverTimestamp(),
         ...(type === "todos" && { completed: false }),
-      };
-      return {
-        ...userDoc,
-        [type]: [newDoc, ...userDoc?.[type]],
-      };
+      }
+    );
+
+    await updateDoc(doc(db, "users", session?.user?.uid, type, docRef.id), {
+      id: docRef.id,
     });
 
     handleCloseModal();
   }
 
-  // EDIT DOC
   async function handleUpdateDoc(e: any) {
     e.preventDefault();
 
@@ -86,23 +79,7 @@ const Modal = () => {
 
     setLoading(true);
 
-    setUserDoc((userDoc: any) => {
-      const newDoc = {
-        title,
-        ...(type === "notes" && { content }),
-        updated: {
-          toDate: () => new Date(),
-        },
-      };
-      return {
-        ...userDoc,
-        [type]: userDoc?.[type]?.map((doc: any) =>
-          doc?.id === docId ? { ...doc, ...newDoc } : doc
-        ),
-      };
-    });
-
-    await updateDoc(doc(db, "users", userDoc?.uid, type, docId), {
+    await updateDoc(doc(db, "users", session?.user?.uid, type, docId), {
       title: title,
       ...(type === "notes" && { content: content }),
       updated: serverTimestamp(),
@@ -125,31 +102,29 @@ const Modal = () => {
   }
 
   function handleInputChange(e: any) {
-    let val = e.target.value;
-
+    let value = e.target.value;
     if (edit) {
-      setTitle(val);
+      setTitle(value);
     } else {
-      setAddTitle(val);
+      setAddTitle(value);
     }
   }
 
   function handleTextAreaChange(e: any) {
-    let val = e.target.value;
-
+    let value = e.target.value;
     if (edit) {
-      setContent(val);
+      setContent(value);
     } else {
-      setAddContent(val);
+      setAddContent(value);
     }
   }
 
   function handleDisable() {
-    let disable =
+    return (
       loading ||
       (edit && (!title || (type === "notes" && !content))) ||
-      (!edit && (!addTitle || (type === "notes" && !addContent)));
-    return disable;
+      (!edit && (!addTitle || (type === "notes" && !addContent)))
+    );
   }
 
   return (

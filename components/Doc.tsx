@@ -6,32 +6,26 @@ import { useRecoilState } from "recoil";
 import {
   docIdState,
   editModalState,
-  modalState,
+  openModal,
   typeModalState,
 } from "atoms/modal";
 import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import Checkbox from "./Checkbox";
-import { userDocState } from "atoms/userDoc";
 import { readDocIdModal, readModal } from "atoms/readModal";
+import { useSession } from "next-auth/react";
 
 const Doc = ({ doc: currDoc }: any) => {
-  const [open, setOpen] = useRecoilState(modalState);
+  const [open, setOpen] = useRecoilState(openModal);
   const [edit, setEdit] = useRecoilState(editModalState);
   const [newId, setNewId] = useRecoilState(docIdState);
   const [type, setType] = useRecoilState(typeModalState);
-  const [userDoc, setUserDoc] = useRecoilState(userDocState);
   const [readOpen, setReadOpen] = useRecoilState(readModal);
   const [readDocId, setReadDocId] = useRecoilState(readDocIdModal);
+  const { data: session }: any = useSession();
 
   async function handleDeleteDoc() {
-    setUserDoc((userDoc: any) => {
-      return {
-        ...userDoc,
-        [type]: userDoc?.[type]?.filter((doc: any) => doc?.id !== currDoc?.id),
-      };
-    });
-    await deleteDoc(doc(db, "users", userDoc?.uid, type, currDoc?.id));
+    await deleteDoc(doc(db, "users", session?.user?.uid, type, currDoc?.id));
   }
 
   function handleUpdateDoc() {
@@ -41,27 +35,12 @@ const Doc = ({ doc: currDoc }: any) => {
   }
 
   const markTodo = async () => {
-    let isCompleted = userDoc?.todos?.filter(
-      (doc: any) => doc?.id === currDoc?.id
-    )[0]?.completed;
-
-    setUserDoc((userDoc: any) => {
-      return {
-        ...userDoc,
-        todos: userDoc?.[type]?.map((doc: any) =>
-          doc?.id === currDoc?.id
-            ? {
-                ...doc,
-                completed: !isCompleted,
-              }
-            : doc
-        ),
-      };
-    });
-
-    await updateDoc(doc(db, "users", userDoc?.uid, "todos", currDoc?.id), {
-      completed: !isCompleted,
-    });
+    await updateDoc(
+      doc(db, "users", session?.user?.uid, "todos", currDoc?.id),
+      {
+        completed: !currDoc?.completed,
+      }
+    );
   };
 
   function handleReadDocOpen() {

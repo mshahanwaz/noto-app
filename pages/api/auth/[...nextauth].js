@@ -17,7 +17,7 @@ export default NextAuth({
         .split(" ")
         .join("")
         .toLocaleLowerCase();
-      session.user.uid = token.sub;
+      session.user.uid = `${session.user.username}_${token.sub}`;
       return session;
     },
   },

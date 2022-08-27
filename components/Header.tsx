@@ -22,13 +22,13 @@ const Header = () => {
   }
 
   return (
-    <div className="dark:bg-grey">
+    <div className="px-4 dark:bg-grey">
       <div className="pb-8 max-w-xl mx-auto dark:text-white">
         <div className="py-8 flex justify-between items-center w-full">
           <h1 className="text-3xl font-bold">Noto App</h1>
           {session ? (
             <img
-              className="box-content h-8 w-8 rounded-full cursor-pointer border-2 border-black dark:border-white p-[2px]"
+              className="box-content h-8 w-8 rounded-full cursor-pointer border-2 border-black dark:border-white p-[3px]"
               src={session?.user?.image || "/avatar.png"}
               alt="profile pic"
               onClick={() => signOut()}
@@ -38,7 +38,15 @@ const Header = () => {
           )}
         </div>
         <p className="text-slate-500 dark:text-grey-light font-medium">
-          Lightweight notes + todo taking application built with Next.js
+          Lightweight notes + todo taking application built with{" "}
+          <a
+            className="text-blue-600 dark:text-blue-light underline"
+            href="https://nextjs.org/"
+            target="_blank"
+            rel="noreferrer noopener"
+          >
+            Next.js
+          </a>
         </p>
       </div>
 

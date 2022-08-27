@@ -1,28 +1,20 @@
 import { PlusIcon } from "@heroicons/react/24/outline";
 import { modalState, typeModalState } from "atoms/modal";
-import { db } from "../firebase";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import React, { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import Doc from "./Doc";
+import { userDocState } from "atoms/userDoc";
 
 const Docs = () => {
-  const [docs, setDocs] = React.useState([]);
+  const [userDoc, setUserDoc] = useRecoilState(userDocState);
   const [open, setOpen] = useRecoilState(modalState);
   const [type, setType] = useRecoilState(typeModalState);
 
+  const [docs, setDocs] = React.useState([]);
+
   useEffect(() => {
-    return onSnapshot(
-      query(collection(db, type), orderBy("timestamp", "desc")),
-      (snapshot: any) => {
-        let docs = snapshot?.docs.map((doc: any) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setDocs(docs);
-      }
-    );
-  }, [type]);
+    setDocs(userDoc?.[type]);
+  }, [userDoc, type]);
 
   function handleAddDoc() {
     setOpen(true);
@@ -38,7 +30,7 @@ const Docs = () => {
         <p>Add {type.substring(0, type.length - 1)}</p>
       </div>
       <div className="my-8 flex flex-col gap-4 rounded-lg">
-        {docs.map(
+        {docs?.map(
           (doc: any) =>
             (type === "notes" || !doc?.completed) && (
               <Doc key={doc?.id} doc={doc} />
@@ -51,11 +43,11 @@ const Docs = () => {
           <p className="pb-4 dark:text-grey-light">
             Completed -{" "}
             <strong>
-              {docs.filter((doc: any) => doc?.completed).length}/{docs.length}
+              {docs?.filter((doc: any) => doc?.completed).length}/{docs?.length}
             </strong>
           </p>
           <div className="flex flex-col gap-4 rounded-lg">
-            {docs.map(
+            {docs?.map(
               (doc: any) => doc?.completed && <Doc key={doc?.id} doc={doc} />
             )}
           </div>

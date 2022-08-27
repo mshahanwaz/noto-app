@@ -13,13 +13,13 @@ import {
   serverTimestamp,
   updateDoc,
   doc,
-  onSnapshot,
 } from "@firebase/firestore";
 import { db } from "../firebase";
-import { useSession } from "next-auth/react";
 import classNames from "utils/classNames";
+import { userDocState } from "atoms/userDoc";
 
 const Modal = () => {
+  const [userDoc, setUserDoc] = useRecoilState(userDocState);
   const [open, setOpen] = useRecoilState(modalState);
   const [type, setType] = useRecoilState(typeModalState);
   const [edit, setEdit] = useRecoilState(editModalState);
@@ -29,22 +29,16 @@ const Modal = () => {
   const [content, setContent] = React.useState("");
   const [addTitle, setAddTitle] = React.useState("");
   const [addContent, setAddContent] = React.useState("");
-  const { data: session }: any = useSession();
 
   useEffect(() => {
-    async function loadDoc() {
-      await onSnapshot(collection(db, type), (snapshot: any) => {
-        let docWithId = snapshot?.docs
-          ?.filter((doc: any) => doc.id === docId)[0]
-          ?.data();
-        setTitle(docWithId?.title);
-        if (type === "notes") setContent(docWithId?.content);
-      });
-    }
+    let docToBeEdited: any = userDoc?.[type]?.filter(
+      (doc: any) => doc.id === docId
+    )[0];
+    setTitle(docToBeEdited?.title);
+    if (type === "notes") setContent(docToBeEdited?.content);
+  }, [docId, userDoc, type]);
 
-    loadDoc();
-  }, [docId]); // eslint-disable-line
-
+  // ADD DOC
   async function handleAddDoc(e: any) {
     e.preventDefault();
 
@@ -52,31 +46,38 @@ const Modal = () => {
     if (!addTitle || (type === "notes" && !addContent)) return;
 
     setLoading(true);
-    if (type === "notes") {
-      await addDoc(collection(db, "notes"), {
-        uid: session?.user?.uid,
-        username: session?.user?.username,
-        email: session?.user?.email,
+
+    const docRef = await addDoc(collection(db, "users", userDoc?.uid, type), {
+      title: addTitle,
+      ...(type === "notes" && { content: addContent }),
+      timestamp: serverTimestamp(),
+      ...(type === "todos" && { completed: false }),
+    });
+
+    await updateDoc(doc(db, "users", userDoc?.uid, type, docRef.id), {
+      id: docRef.id,
+    });
+
+    setUserDoc((userDoc: any) => {
+      const newDoc = {
+        id: docRef.id,
         title: addTitle,
-        content: addContent,
-        profilePic: session?.user?.image,
-        timestamp: serverTimestamp(),
-      });
-    } else {
-      await addDoc(collection(db, "todos"), {
-        uid: session?.user?.uid,
-        username: session?.user?.username,
-        email: session?.user?.email,
-        title: addTitle,
-        profilePic: session?.user?.image,
-        timestamp: serverTimestamp(),
-        completed: false,
-      });
-    }
+        ...(type === "notes" && { content: addContent }),
+        timestamp: {
+          toDate: () => new Date(),
+        },
+        ...(type === "todos" && { completed: false }),
+      };
+      return {
+        ...userDoc,
+        [type]: [newDoc, ...userDoc?.[type]],
+      };
+    });
 
     handleCloseModal();
   }
 
+  // EDIT DOC
   async function handleUpdateDoc(e: any) {
     e.preventDefault();
 
@@ -84,18 +85,28 @@ const Modal = () => {
     if (!title || (type === "notes" && !content)) return;
 
     setLoading(true);
-    if (type === "notes") {
-      await updateDoc(doc(db, "notes", docId), {
-        title: title,
-        content: content,
-        updated: serverTimestamp(),
-      });
-    } else {
-      await updateDoc(doc(db, "todos", docId), {
-        title: title,
-        updated: serverTimestamp(),
-      });
-    }
+
+    setUserDoc((userDoc: any) => {
+      const newDoc = {
+        title,
+        ...(type === "notes" && { content }),
+        updated: {
+          toDate: () => new Date(),
+        },
+      };
+      return {
+        ...userDoc,
+        [type]: userDoc?.[type]?.map((doc: any) =>
+          doc?.id === docId ? { ...doc, ...newDoc } : doc
+        ),
+      };
+    });
+
+    await updateDoc(doc(db, "users", userDoc?.uid, type, docId), {
+      title: title,
+      ...(type === "notes" && { content: content }),
+      updated: serverTimestamp(),
+    });
 
     handleCloseModal();
   }
@@ -142,83 +153,81 @@ const Modal = () => {
   }
 
   return (
-    <div>
-      <Transition appear show={open} as={React.Fragment}>
-        <Dialog as="div" className="relative z-10" onClose={handleCloseModal}>
-          <Transition.Child
-            as={React.Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50" />
-          </Transition.Child>
+    <Transition appear show={open} as={React.Fragment}>
+      <Dialog as="div" className="relative z-10" onClose={handleCloseModal}>
+        <Transition.Child
+          as={React.Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50" />
+        </Transition.Child>
 
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-center">
-              <Transition.Child
-                as={React.Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white p-6 text-left align-middle shadow-xl transition-all">
-                  <Dialog.Title
-                    as="h3"
-                    className="text-xl font-semibold leading-6 text-gray-900"
-                  >
-                    {edit ? "Update" : "Add"} {type}
-                  </Dialog.Title>
-                  <form onSubmit={edit ? handleUpdateDoc : handleAddDoc}>
-                    <div className="my-4 flex flex-col gap-4">
-                      <input
-                        type="text"
-                        className="p-2 border-2 dark:border-grey-light focus:border-grey w-full rounded-lg outline-none"
-                        placeholder="Title"
-                        value={edit ? title : addTitle}
-                        onChange={handleInputChange}
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4 text-center">
+            <Transition.Child
+              as={React.Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+                <Dialog.Title
+                  as="h3"
+                  className="text-xl font-semibold leading-6 text-gray-900"
+                >
+                  {edit ? "Update" : "Add"} {type}
+                </Dialog.Title>
+                <form onSubmit={edit ? handleUpdateDoc : handleAddDoc}>
+                  <div className="my-4 flex flex-col gap-4">
+                    <input
+                      type="text"
+                      className="p-2 border-2 dark:border-grey-light focus:border-grey w-full rounded-lg outline-none"
+                      placeholder="Title"
+                      value={edit ? title : addTitle}
+                      onChange={handleInputChange}
+                    />
+                    {type === "notes" && (
+                      <textarea
+                        className="p-2 border-2 max-h-[200px] dark:border-grey-light focus:border-grey w-full rounded-lg h-24 outline-none"
+                        placeholder={`${
+                          edit ? "Update" : "Write"
+                        } ${type.substring(0, type.length - 1)} here...`}
+                        value={edit ? content : addContent}
+                        onChange={handleTextAreaChange}
                       />
-                      {type === "notes" && (
-                        <textarea
-                          className="p-2 border-2 dark:border-grey-light focus:border-grey w-full rounded-lg h-24 outline-none"
-                          placeholder={`${
-                            edit ? "Update" : "Write"
-                          } ${type.substring(0, type.length - 1)} here...`}
-                          value={edit ? content : addContent}
-                          onChange={handleTextAreaChange}
-                        />
-                      )}
-                    </div>
+                    )}
+                  </div>
 
-                    <button
-                      type="submit"
-                      disabled={handleDisable()}
-                      className={classNames(
-                        "inline-flex justify-center rounded-md border border-transparent bg-grey dark:bg-grey dark:text-white px-4 py-2 font-medium text-white hover:bg-black dark:hover:text-white",
-                        "disabled:text-white disabled:bg-grey-light disabled:cursor-not-allowed"
-                      )}
-                    >
-                      {loading
-                        ? `${edit ? "Updating" : "Adding"}...`
-                        : `${edit ? "Update" : "Add"} ${type.substring(
-                            0,
-                            type.length - 1
-                          )}`}
-                    </button>
-                  </form>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
+                  <button
+                    type="submit"
+                    disabled={handleDisable()}
+                    className={classNames(
+                      "inline-flex justify-center rounded-md border border-transparent bg-grey dark:bg-grey dark:text-white px-4 py-2 font-medium text-white hover:bg-black dark:hover:text-white",
+                      "disabled:text-white disabled:bg-grey-light disabled:cursor-not-allowed"
+                    )}
+                  >
+                    {loading
+                      ? `${edit ? "Updating" : "Adding"}...`
+                      : `${edit ? "Update" : "Add"} ${type.substring(
+                          0,
+                          type.length - 1
+                        )}`}
+                  </button>
+                </form>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
-        </Dialog>
-      </Transition>
-    </div>
+        </div>
+      </Dialog>
+    </Transition>
   );
 };
 export default Modal;

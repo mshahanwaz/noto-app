@@ -4,6 +4,7 @@ import EditPenIcon from "./svgs/EditPen";
 import TrashIcon from "./svgs/Trash";
 import FileIcon from "./svgs/File";
 import GoogleIcon from "./svgs/GoogleIcon";
+import ArrowLeftIcon from "./svgs/ArrowLeft";
 
 export {
   CheckSquareIcon,
@@ -12,4 +13,5 @@ export {
   TrashIcon,
   FileIcon,
   GoogleIcon,
+  ArrowLeftIcon,
 };

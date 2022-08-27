@@ -1,6 +1,5 @@
 import React, { useEffect } from "react";
 import { getProviders, signIn, useSession } from "next-auth/react";
-import Button from "components/Button";
 import { useRouter } from "next/router";
 import { GoogleIcon } from "components/icons";
 
@@ -23,7 +22,7 @@ const SignIn = ({ providers }: any) => {
       {Object.values(providers).map((provider: any) => (
         <div
           key={provider.name}
-          className="pb-20 dark:bg-grey dark:hover:bg-black h-screen flex flex-col items-center justify-center dark:text-white"
+          className="pb-20 dark:bg-grey h-screen flex flex-col items-center justify-center dark:text-white"
         >
           <h1 className="text-3xl font-bold">Noto App</h1>
           <p className="text-md font-md text-slate-500 dark:text-grey-light mt-4 mb-8">

@@ -41,10 +41,6 @@ const Home: NextPage = () => {
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <Head>
         <title>Noto App</title>
-        <meta
-          name="description"
-          content="Notes and todo taking web application"
-        />
         <link rel="icon" href="/favicon.ico" />
       </Head>
 

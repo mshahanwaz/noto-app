@@ -42,7 +42,7 @@ const Docs = () => {
   return (
     <main className="px-4 py-8 max-w-xl mx-auto">
       <div
-        className="flex items-center justify-center gap-4 p-4 border-2 text-lg font-medium text-gray-400 dark:text-grey-medium border-dashed hover:border-solid border-gray-400 dark:border-grey-medium hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer rounded-xl"
+        className="flex items-center justify-center gap-4 p-4 border-2 text-lg font-medium text-gray-400 dark:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800 border-dashed hover:border-solid border-gray-400 dark:border-gray-600 cursor-pointer rounded-xl"
         onClick={handleAddDoc}
       >
         <PlusIcon width={24} />

@@ -51,7 +51,7 @@ const ReadModal = () => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-900 bg-opacity-25 dark:bg-opacity-50" />
+          <div className="fixed inset-0 bg-gray-900 dark:bg-gray-700 bg-opacity-25 dark:bg-opacity-50" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -65,26 +65,26 @@ const ReadModal = () => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="text-gray-900 w-full max-w-lg transform overflow-hidden rounded-xl bg-gray-50 p-6 text-left shadow-xl transition-all">
+              <Dialog.Panel className="text-gray-900 dark:text-gray-50 w-full max-w-lg transform overflow-hidden rounded-xl bg-gray-50 dark:bg-gray-900 p-6 text-left shadow-xl transition-all">
                 <div className="flex items-center justify-between">
                   <button
-                    className="p-2 bg-gray-800 hover:bg-gray-900 text-gray-50 rounded-lg"
+                    className="p-2 bg-gray-800 hover:bg-gray-900 text-gray-50 dark:text-gray-900 dark:hover:bg-gray-50 dark:bg-gray-100 rounded-lg transition-all"
                     onClick={handleCloseModal}
                   >
                     <ArrowLeftIcon />
                   </button>
-                  <span className="text-gray-500">
+                  <span className="text-gray-500 dark:text-gray-400">
                     {doc?.updated
                       ? `${moment(doc?.updated?.toDate()).format(
                           "lll"
                         )}(edited)`
-                      : moment(doc?.updated?.toDate()).format("lll")}
+                      : moment(doc?.timestamp?.toDate()).format("lll")}
                   </span>
                 </div>
                 <Dialog.Title as="h3" className="my-4 text-2xl font-bold">
                   {doc?.title}
                 </Dialog.Title>
-                <pre className="text-gray-600 font-sans w-full font-medium whitespace-pre-wrap">
+                <pre className="text-gray-600 dark:text-gray-300 font-sans w-full font-medium whitespace-pre-wrap">
                   <Dialog.Description>{doc?.content}</Dialog.Description>
                 </pre>
               </Dialog.Panel>

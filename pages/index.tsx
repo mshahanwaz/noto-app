@@ -38,7 +38,7 @@ const Home: NextPage = () => {
   }
 
   return (
-    <div className="bg-gray-50 dark:bg-grey min-h-screen">
+    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
       <Head>
         <title>Noto App</title>
         <meta

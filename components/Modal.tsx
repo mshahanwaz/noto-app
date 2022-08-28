@@ -140,7 +140,7 @@ const Modal = () => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-gray-900 bg-opacity-25 dark:bg-opacity-50" />
+          <div className="fixed inset-0 bg-gray-900 dark:bg-gray-700 bg-opacity-25 dark:bg-opacity-50" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -154,10 +154,10 @@ const Modal = () => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-gray-50 p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl text-gray-900 dark:text-gray-50 bg-gray-50 dark:bg-gray-900 p-6 text-left align-middle shadow-xl transition-all">
                 <Dialog.Title
                   as="h3"
-                  className="text-xl font-semibold leading-6 text-gray-900"
+                  className="text-xl font-semibold leading-6"
                 >
                   {edit ? "Update" : "Add"} {type.substring(0, type.length - 1)}
                 </Dialog.Title>
@@ -165,14 +165,14 @@ const Modal = () => {
                   <div className="my-4 flex flex-col gap-4 text-gray-900">
                     <input
                       type="text"
-                      className="p-2 bg-gray-50 border-2 border-gray-300 dark:border-grey-light focus:border-gray-500 w-full rounded-lg outline-none"
+                      className="p-2 dark:text-gray-50 bg-gray-50 dark:bg-gray-900 border-2 border-gray-300 dark:border-gray-700 focus:border-gray-500 w-full rounded-lg outline-none"
                       placeholder="Title"
                       value={edit ? title : addTitle}
                       onChange={handleInputChange}
                     />
                     {type === "notes" && (
                       <textarea
-                        className="p-2 bg-gray-50 border-2 max-h-[200px] border-gray-300 dark:border-grey-light focus:border-gray-500 w-full rounded-lg h-24 outline-none"
+                        className="p-2 dark:text-gray-50 bg-gray-50 dark:bg-gray-900 border-2 max-h-[200px] min-h-[100px] border-gray-300 dark:border-gray-700 focus:border-gray-500 w-full rounded-lg h-24 outline-none"
                         placeholder={`${
                           edit ? "Update" : "Write"
                         } ${type.substring(0, type.length - 1)} here...`}

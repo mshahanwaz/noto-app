@@ -51,13 +51,13 @@ const Doc = ({ doc: currDoc }: any) => {
   return (
     <div
       className={classNames(
-        "p-4 bg-gray-200 hover:bg-gray-300 rounded-2xl text-gray-900 dark:bg-grey-dark dark:text-grey-light dark:hover:bg-black transition-colors"
+        "p-4 text-gray-900 bg-gray-200 hover:bg-gray-300 rounded-2xl dark:bg-gray-800 dark:text-gray-50 dark:hover:bg-gray-700 transition-colors"
       )}
     >
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2">
         {type === "notes" ? (
           <button
-            className="p-2 text-gray-900 hover:text-gray-50 hover:bg-gray-900 dark:bg-grey-light dark:hover:bg-white dark:text-black rounded-lg transition-all"
+            className="p-2 text-gray-900 hover:text-gray-50 hover:bg-gray-900 dark:hover:bg-gray-50 dark:text-gray-50 dark:hover:text-gray-900 rounded-lg transition-all"
             onClick={handleReadDocOpen}
           >
             <FileIcon />
@@ -65,7 +65,7 @@ const Doc = ({ doc: currDoc }: any) => {
         ) : (
           <Checkbox doc={currDoc} onClick={markTodo} />
         )}
-        <div className={classNames("flex-1 text-gray-500")}>
+        <div className={classNames("flex-1 text-gray-500 dark:text-gray-400")}>
           {currDoc?.updated
             ? `${moment(currDoc?.updated?.toDate()).fromNow()}(edited)`
             : moment(currDoc?.timestamp?.toDate()).fromNow()}
@@ -80,11 +80,11 @@ const Doc = ({ doc: currDoc }: any) => {
         </div>
       </div>
       <div className="mt-2 flex flex-col">
-        <h3 className="text-lg font-semibold dark:text-white truncate">
+        <h3 className="text-lg font-semibold dark:text-gray-50 truncate">
           {currDoc?.title}
         </h3>
         {type === "notes" && (
-          <pre className="font-sans text-gray-700 dark:text-grey-light line-clamp-1">
+          <pre className="font-sans text-gray-700 dark:text-gray-300 line-clamp-1">
             {currDoc?.content}
           </pre>
         )}
@@ -98,7 +98,7 @@ export default Doc;
 const CustomButton = ({ children, ...props }: any) => {
   return (
     <button
-      className="p-2 hover:text-gray-50 hover:bg-gray-900 dark:hover:bg-white dark:hover:text-black rounded-lg transition-all"
+      className="p-2 hover:text-gray-50 hover:bg-gray-900 dark:hover:bg-gray-50 dark:hover:text-gray-900 rounded-lg transition-all"
       {...props}
     >
       {children}

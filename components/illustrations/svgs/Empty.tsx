@@ -3,7 +3,7 @@ import React from "react";
 const Empty = () => {
   return (
     <svg
-      className="fill-gray-400 dark:fill-grey-light w-full"
+      className="fill-gray-400 dark:fill-gray-600 w-full"
       viewBox="0 0 423 447"
       xmlns="http://www.w3.org/2000/svg"
     >

@@ -13,7 +13,7 @@ const Checkbox = ({ doc, onClick }: any) => {
       >
         <span
           className={classNames(
-            "w-3 h-3 rounded group-hover:bg-gray-50 dark:group-hover:bg-gray-900 scale-0 group-hover:scale-100 transition-all",
+            "w-3 h-3 rounded-[3px] group-hover:bg-gray-50 dark:group-hover:bg-gray-900 scale-0 group-hover:scale-100 transition-all",
             doc?.completed && "bg-gray-900 dark:bg-gray-50 scale-100"
           )}
         />

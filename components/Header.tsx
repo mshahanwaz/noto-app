@@ -29,7 +29,7 @@ const Header = () => {
           {session ? (
             <img
               className="box-content h-8 w-8 rounded-full cursor-pointer border-2 border-gray-900 dark:border-gray-50 p-[3px]"
-              src={session?.user?.image || "/avatar.png"}
+              src={session?.user?.image || ""}
               alt="profile pic"
               onClick={() => signOut()}
             />

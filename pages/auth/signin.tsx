@@ -15,7 +15,7 @@ const SignIn = ({ providers }: any) => {
   }, [session, router]);
 
   if (session.status !== "unauthenticated") {
-    return <div className="dark:bg-grey" />;
+    return <div className="bg-gray-50 dark:bg-gray-900" />;
   }
 
   return (

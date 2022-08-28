@@ -64,7 +64,7 @@ const Docs = () => {
           </div>
           {type === "todos" && (
             <div className="my-8">
-              <p className="pb-4 text-gray-600 dark:text-grey-light">
+              <p className="pb-4 text-gray-600 dark:text-gray-400">
                 Completed -{" "}
                 <strong>
                   {docs?.filter((doc: any) => doc?.completed).length}/

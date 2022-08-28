@@ -80,11 +80,23 @@ const Doc = ({ doc: currDoc }: any) => {
         </div>
       </div>
       <div className="mt-2 flex flex-col">
-        <h3 className="text-lg font-semibold dark:text-gray-50 truncate">
+        <h3
+          className={classNames(
+            "text-lg font-semibold dark:text-gray-50",
+            type === "notes" ? "truncate" : ""
+          )}
+        >
           {currDoc?.title}
         </h3>
         {type === "notes" && (
-          <pre className="font-sans text-gray-700 dark:text-gray-300 line-clamp-1">
+          <pre
+            className={classNames(
+              "font-sans text-gray-700 dark:text-gray-300 ",
+              currDoc?.content?.split("\n")[0]?.length < 40
+                ? "line-clamp-1"
+                : "truncate"
+            )}
+          >
             {currDoc?.content}
           </pre>
         )}

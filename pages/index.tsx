@@ -34,7 +34,7 @@ const Home: NextPage = () => {
   if (status === "unauthenticated") {
     return null;
   } else if (status === "loading") {
-    return <div className="dark:bg-grey" />;
+    return <div className="bg-gray-50 dark:bg-gray-900" />;
   }
 
   return (

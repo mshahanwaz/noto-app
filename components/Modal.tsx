@@ -20,6 +20,7 @@ import {
 import { db } from "../firebase";
 import classNames from "utils/classNames";
 import { useSession } from "next-auth/react";
+import Button from "./Button";
 
 const Modal = () => {
   const [open, setOpen] = useRecoilState(openModal);
@@ -139,7 +140,7 @@ const Modal = () => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50" />
+          <div className="fixed inset-0 bg-gray-900 bg-opacity-25 dark:bg-opacity-50" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -153,25 +154,25 @@ const Modal = () => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-white p-6 text-left align-middle shadow-xl transition-all">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-xl bg-gray-50 p-6 text-left align-middle shadow-xl transition-all">
                 <Dialog.Title
                   as="h3"
                   className="text-xl font-semibold leading-6 text-gray-900"
                 >
-                  {edit ? "Update" : "Add"} {type}
+                  {edit ? "Update" : "Add"} {type.substring(0, type.length - 1)}
                 </Dialog.Title>
                 <form onSubmit={edit ? handleUpdateDoc : handleAddDoc}>
-                  <div className="my-4 flex flex-col gap-4">
+                  <div className="my-4 flex flex-col gap-4 text-gray-900">
                     <input
                       type="text"
-                      className="p-2 border-2 dark:border-grey-light focus:border-grey w-full rounded-lg outline-none"
+                      className="p-2 bg-gray-50 border-2 border-gray-300 dark:border-grey-light focus:border-gray-500 w-full rounded-lg outline-none"
                       placeholder="Title"
                       value={edit ? title : addTitle}
                       onChange={handleInputChange}
                     />
                     {type === "notes" && (
                       <textarea
-                        className="p-2 border-2 max-h-[200px] dark:border-grey-light focus:border-grey w-full rounded-lg h-24 outline-none"
+                        className="p-2 bg-gray-50 border-2 max-h-[200px] border-gray-300 dark:border-grey-light focus:border-gray-500 w-full rounded-lg h-24 outline-none"
                         placeholder={`${
                           edit ? "Update" : "Write"
                         } ${type.substring(0, type.length - 1)} here...`}
@@ -181,21 +182,14 @@ const Modal = () => {
                     )}
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={handleDisable()}
-                    className={classNames(
-                      "inline-flex justify-center rounded-md border border-transparent bg-grey dark:bg-grey dark:text-white px-4 py-2 font-medium text-white hover:bg-black dark:hover:text-white",
-                      "disabled:text-white disabled:bg-grey-light disabled:cursor-not-allowed"
-                    )}
-                  >
+                  <Button type="submit" disabled={handleDisable()}>
                     {loading
                       ? `${edit ? "Updating" : "Adding"}...`
                       : `${edit ? "Update" : "Add"} ${type.substring(
                           0,
                           type.length - 1
                         )}`}
-                  </button>
+                  </Button>
                 </form>
               </Dialog.Panel>
             </Transition.Child>

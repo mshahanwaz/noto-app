@@ -3,18 +3,18 @@ import classNames from "utils/classNames";
 const Checkbox = ({ doc, onClick }: any) => {
   return (
     <div
-      className="rounded-lg p-2 bg-slate-200 hover:bg-slate-300 dark:bg-grey-light dark:hover:bg-white cursor-pointer group"
+      className="rounded-lg p-2 hover:bg-gray-900 dark:bg-grey-light dark:hover:bg-white cursor-pointer group transition-all"
       onClick={onClick}
     >
       <div
         className={classNames(
-          "flex items-center justify-center w-5 h-5 border-2 rounded-md border-black"
+          "flex items-center justify-center w-5 h-5 border-2 rounded-md border-gray-900 group-hover:border-gray-50"
         )}
       >
         <span
           className={classNames(
-            "w-3 h-3 rounded group-hover:bg-black scale-0 group-hover:scale-100 transition-all",
-            doc?.completed && "bg-black scale-100"
+            "w-3 h-3 rounded group-hover:bg-gray-50 scale-0 group-hover:scale-100 transition-all",
+            doc?.completed && "bg-gray-900 scale-100"
           )}
         />
       </div>

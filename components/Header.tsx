@@ -25,10 +25,10 @@ const Header = () => {
     <div className="px-4 dark:bg-grey">
       <div className="pb-8 max-w-xl mx-auto dark:text-white">
         <div className="py-8 flex justify-between items-center w-full">
-          <h1 className="text-3xl font-bold">Noto App</h1>
+          <h1 className="text-3xl text-gray-900 font-bold">Noto App</h1>
           {session ? (
             <img
-              className="box-content h-8 w-8 rounded-full cursor-pointer border-2 border-black dark:border-white p-[3px]"
+              className="box-content h-8 w-8 rounded-full cursor-pointer border-2 border-gray-900 dark:border-white p-[3px]"
               src={session?.user?.image || "/avatar.png"}
               alt="profile pic"
               onClick={() => signOut()}
@@ -37,10 +37,10 @@ const Header = () => {
             <Button onClick={() => signIn()}>Sign In</Button>
           )}
         </div>
-        <p className="text-slate-500 dark:text-grey-light font-medium">
+        <p className="text-gray-600 dark:text-grey-light font-medium">
           Lightweight notes + todo taking application built with{" "}
           <a
-            className="text-blue-600 dark:text-blue-light underline"
+            className="text-black dark:text-blue-light hover:underline"
             href="https://nextjs.org/"
             target="_blank"
             rel="noreferrer noopener"
@@ -76,10 +76,10 @@ const CustomButton = ({ children, activeType, onClick }: any) => {
   return (
     <button
       className={classNames(
-        "box-content flex items-center gap-3 px-4 py-2 text-lg font-medium rounded-lg",
+        "box-content flex items-center gap-3 px-4 py-2 text-lg font-medium rounded-lg transition-all",
         activeType === type
-          ? "bg-black text-white dark:bg-white dark:text-black"
-          : "text-slate-500 dark:text-grey-light hover:bg-slate-100 dark:hover:bg-black"
+          ? "bg-gray-800 text-gray-50 dark:bg-white dark:text-black"
+          : "text-gray-600 bg-gray-200 dark:text-grey-light hover:bg-gray-300 dark:hover:bg-black"
       )}
       onClick={() => onClick(activeType)}
     >

@@ -51,13 +51,13 @@ const Doc = ({ doc: currDoc }: any) => {
   return (
     <div
       className={classNames(
-        "p-4 bg-slate-50 hover:bg-slate-100 rounded-lg text-black dark:bg-grey-dark dark:text-grey-light dark:hover:bg-black"
+        "p-4 bg-gray-200 hover:bg-gray-300 rounded-2xl text-gray-900 dark:bg-grey-dark dark:text-grey-light dark:hover:bg-black transition-colors"
       )}
     >
       <div className="flex items-center gap-4">
         {type === "notes" ? (
           <button
-            className="p-2 hover:bg-slate-300 bg-slate-200 dark:bg-grey-light dark:hover:bg-white dark:text-black rounded-lg"
+            className="p-2 text-gray-900 hover:text-gray-50 hover:bg-gray-900 dark:bg-grey-light dark:hover:bg-white dark:text-black rounded-lg transition-all"
             onClick={handleReadDocOpen}
           >
             <FileIcon />
@@ -65,32 +65,26 @@ const Doc = ({ doc: currDoc }: any) => {
         ) : (
           <Checkbox doc={currDoc} onClick={markTodo} />
         )}
-        <div className={classNames("flex-1")}>
+        <div className={classNames("flex-1 text-gray-500")}>
           {currDoc?.updated
             ? `${moment(currDoc?.updated?.toDate()).fromNow()}(edited)`
             : moment(currDoc?.timestamp?.toDate()).fromNow()}
         </div>
         <div className="flex gap-2 self-start">
-          <button
-            className="p-2 hover:bg-slate-200 dark:hover:bg-white dark:hover:text-black rounded-lg"
-            onClick={handleUpdateDoc}
-          >
+          <CustomButton onClick={handleUpdateDoc}>
             <EditPenIcon />
-          </button>
-          <button
-            className="p-2 hover:bg-slate-200 dark:hover:bg-white dark:hover:text-black rounded-lg"
-            onClick={handleDeleteDoc}
-          >
+          </CustomButton>
+          <CustomButton onClick={handleDeleteDoc}>
             <TrashIcon />
-          </button>
+          </CustomButton>
         </div>
       </div>
-      <div>
-        <h3 className="mt-4 text-lg font-semibold dark:text-white truncate">
+      <div className="mt-2 flex flex-col">
+        <h3 className="text-lg font-semibold dark:text-white truncate">
           {currDoc?.title}
         </h3>
         {type === "notes" && (
-          <pre className="font-sans text-md text-slate-500 dark:text-grey-light line-clamp-1">
+          <pre className="font-sans text-gray-700 dark:text-grey-light line-clamp-1">
             {currDoc?.content}
           </pre>
         )}
@@ -100,3 +94,14 @@ const Doc = ({ doc: currDoc }: any) => {
 };
 
 export default Doc;
+
+const CustomButton = ({ children, ...props }: any) => {
+  return (
+    <button
+      className="p-2 hover:text-gray-50 hover:bg-gray-900 dark:hover:bg-white dark:hover:text-black rounded-lg transition-all"
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};

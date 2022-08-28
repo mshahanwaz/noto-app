@@ -13,20 +13,29 @@ const ReadModal = () => {
   const [open, setOpen] = useRecoilState(readModal);
   const [doc, setDoc] = React.useState<any>({});
   const [type, setType] = useRecoilState(typeModalState);
-  const [readDocId, setReadDocId] = useRecoilState(readDocIdModal);
+  const [docId, setDocId] = useRecoilState(readDocIdModal);
   const { data: session }: any = useSession();
 
   useEffect(() => {
     if (open && session) {
-      const collectionRef = collection(db, "users", session?.user?.uid, type);
+      const collectionRef = collection(
+        db,
+        "users",
+        session?.user?.uid,
+        "notes"
+      );
       return onSnapshot(collectionRef, (snapshot: any) => {
-        setDoc(snapshot?.docs?.filter((doc: any) => doc.id === readDocId)[0]);
+        setDoc(
+          snapshot?.docs?.filter((doc: any) => doc?.id === docId)[0]?.data()
+        );
       });
     }
-  }, [session, open, readDocId, type]);
+  }, [session, open, docId, type]);
+
+  // console.log(doc);
 
   function handleCloseModal() {
-    setReadDocId("");
+    setDocId("");
     setOpen(false);
   }
 
@@ -42,7 +51,7 @@ const ReadModal = () => {
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50" />
+          <div className="fixed inset-0 bg-gray-900 bg-opacity-25 dark:bg-opacity-50" />
         </Transition.Child>
 
         <div className="fixed inset-0 overflow-y-auto">
@@ -56,15 +65,15 @@ const ReadModal = () => {
               leaveFrom="opacity-100 scale-100"
               leaveTo="opacity-0 scale-95"
             >
-              <Dialog.Panel className="w-full max-w-lg transform overflow-hidden rounded-xl bg-white p-6 text-left shadow-xl transition-all">
+              <Dialog.Panel className="text-gray-900 w-full max-w-lg transform overflow-hidden rounded-xl bg-gray-50 p-6 text-left shadow-xl transition-all">
                 <div className="flex items-center justify-between">
                   <button
-                    className="p-2 bg-grey hover:bg-black text-white rounded-lg"
+                    className="p-2 bg-gray-800 hover:bg-gray-900 text-gray-50 rounded-lg"
                     onClick={handleCloseModal}
                   >
                     <ArrowLeftIcon />
                   </button>
-                  <span>
+                  <span className="text-gray-500">
                     {doc?.updated
                       ? `${moment(doc?.updated?.toDate()).format(
                           "lll"
@@ -75,7 +84,7 @@ const ReadModal = () => {
                 <Dialog.Title as="h3" className="my-4 text-2xl font-bold">
                   {doc?.title}
                 </Dialog.Title>
-                <pre className="font-sans w-full font-medium whitespace-pre-wrap">
+                <pre className="text-gray-600 font-sans w-full font-medium whitespace-pre-wrap">
                   <Dialog.Description>{doc?.content}</Dialog.Description>
                 </pre>
               </Dialog.Panel>

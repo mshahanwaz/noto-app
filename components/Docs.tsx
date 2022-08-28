@@ -42,7 +42,7 @@ const Docs = () => {
   return (
     <main className="px-4 py-8 max-w-xl mx-auto">
       <div
-        className="flex items-center justify-center gap-4 p-4 border-2 text-lg font-medium text-slate-400 dark:text-grey-medium border-dashed hover:border-solid border-slate-400 dark:border-grey-medium cursor-pointer rounded-xl"
+        className="flex items-center justify-center gap-4 p-4 border-2 text-lg font-medium text-gray-400 dark:text-grey-medium border-dashed hover:border-solid border-gray-400 dark:border-grey-medium hover:bg-gray-100 dark:hover:bg-gray-900 cursor-pointer rounded-xl"
         onClick={handleAddDoc}
       >
         <PlusIcon width={24} />
@@ -64,7 +64,7 @@ const Docs = () => {
           </div>
           {type === "todos" && (
             <div className="my-8">
-              <p className="pb-4 dark:text-grey-light">
+              <p className="pb-4 text-gray-600 dark:text-grey-light">
                 Completed -{" "}
                 <strong>
                   {docs?.filter((doc: any) => doc?.completed).length}/

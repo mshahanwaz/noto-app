@@ -14,11 +14,8 @@ import {
   updateDoc,
   doc,
   onSnapshot,
-  query,
-  orderBy,
 } from "@firebase/firestore";
 import { db } from "../firebase";
-import classNames from "utils/classNames";
 import { useSession } from "next-auth/react";
 import Button from "./Button";
 

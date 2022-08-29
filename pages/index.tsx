@@ -9,10 +9,14 @@ import { useRouter } from "next/router";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import ReadModal from "components/ReadModal";
+import { HotKeys } from "react-hotkeys";
+import { useRecoilState } from "recoil";
+import { openModal } from "atoms/modal";
 
 const Home: NextPage = () => {
   const { data: session, status }: any = useSession();
   const router = useRouter();
+  const [open, setOpen] = useRecoilState(openModal);
 
   useEffect(() => {
     async function putUser() {
@@ -37,19 +41,32 @@ const Home: NextPage = () => {
     return <div className="bg-gray-50 dark:bg-gray-900" />;
   }
 
+  const keyMap = {
+    TOGGLE_MODAL: "ctrl+k",
+  };
+
+  const handlers = {
+    TOGGLE_MODAL: (e: any) => {
+      e.preventDefault();
+      setOpen(true);
+    },
+  };
+
   return (
-    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
-      <Head>
-        <title>Noto App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <HotKeys keyMap={keyMap} handlers={handlers}>
+      <div className="bg-gray-50 dark:bg-gray-900 min-h-screen">
+        <Head>
+          <title>Noto App</title>
+          <link rel="icon" href="/favicon.ico" />
+        </Head>
 
-      <Header />
-      <Docs />
+        <Header />
+        <Docs />
 
-      <Modal />
-      <ReadModal />
-    </div>
+        <Modal />
+        <ReadModal />
+      </div>
+    </HotKeys>
   );
 };
 

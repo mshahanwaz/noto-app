@@ -47,6 +47,9 @@ const Docs = () => {
       >
         <PlusIcon width={24} />
         <p>Add {type.substring(0, type.length - 1)}</p>
+        <kbd className="text-xs font-semibold border border-gray-300 dark:border-gray-600 border-b-2 pt-1 rounded-md px-1">
+          ctrl+k
+        </kbd>
       </div>
       {docs.length === 0 ? (
         <div className="max-w-xs mx-auto mt-10">
@@ -58,7 +61,7 @@ const Docs = () => {
             {docs?.map(
               (doc: any) =>
                 (type === "notes" || !doc?.completed) && (
-                  <Doc key={doc?.id} doc={doc} />
+                  <Doc key={doc?.timestamp} doc={doc} />
                 )
             )}
           </div>
@@ -74,7 +77,7 @@ const Docs = () => {
               <div className="flex flex-col gap-4 rounded-lg">
                 {docs?.map(
                   (doc: any) =>
-                    doc?.completed && <Doc key={doc?.id} doc={doc} />
+                    doc?.completed && <Doc key={doc?.timestamp} doc={doc} />
                 )}
               </div>
             </div>

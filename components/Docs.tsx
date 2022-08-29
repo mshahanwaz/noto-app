@@ -47,7 +47,7 @@ const Docs = () => {
       >
         <PlusIcon width={24} />
         <p>Add {type.substring(0, type.length - 1)}</p>
-        <kbd className="text-xs font-semibold border border-gray-300 dark:border-gray-600 border-b-2 pt-1 rounded-md px-1">
+        <kbd className="text-xs font-semibold border border-gray-300 dark:border-gray-600 border-b-2 rounded-md px-1">
           ctrl+k
         </kbd>
       </div>

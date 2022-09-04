@@ -11,12 +11,13 @@ import { db } from "../firebase";
 import ReadModal from "components/ReadModal";
 import { HotKeys } from "react-hotkeys";
 import { useRecoilState } from "recoil";
-import { openModal } from "atoms/modal";
+import { openModal, typeModalState } from "atoms/modal";
 
 const Home: NextPage = () => {
   const { data: session, status }: any = useSession();
   const router = useRouter();
   const [open, setOpen] = useRecoilState(openModal);
+  const [type, setType] = useRecoilState(typeModalState);
 
   useEffect(() => {
     async function putUser() {
@@ -43,12 +44,21 @@ const Home: NextPage = () => {
 
   const keyMap = {
     TOGGLE_MODAL: "ctrl+k",
+    TOGGLE_TAB: "ctrl+l",
   };
 
   const handlers = {
     TOGGLE_MODAL: (e: any) => {
       e.preventDefault();
-      setOpen(true);
+      setOpen((open) => !open);
+    },
+    TOGGLE_TAB: (e: any) => {
+      e.preventDefault();
+      setType((type) => {
+        let toggle = type === "notes" ? "todos" : "notes";
+        localStorage.setItem("tab", toggle);
+        return toggle;
+      });
     },
   };
 
@@ -59,7 +69,6 @@ const Home: NextPage = () => {
           <title>Noto App</title>
           <link rel="icon" href="/favicon.ico" />
         </Head>
-
         <Header />
         <Docs />
 
